@@ -8,11 +8,25 @@ const app=express()
 
 app.use(express.json())
 
+app.use(cors({
+    origin: [
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:4173"
+    ],
+    credentials: true
+}));
+
+app.use((req, res, next) => {
+    console.log("Incoming request:", req.method, req.url);
+    next();
+});
+
 const http=require("http")
 
 
 const cookieParser=require("cookie-parser")
-app.use(cookieParser)
+app.use(cookieParser())
 
 
 const authRoutes=require("./routes/authRoutes")
@@ -24,6 +38,11 @@ const houseRoutes=require('./routes/houseRoutes')
 const server=http.createServer(app)
 
 
+
+app.use((req, res, next) => {
+    console.log(req.method, req.url);
+    next();
+});
 
 app.use('/user' , authRoutes)
 app.use('/plot' , plotRoutes )
@@ -37,10 +56,6 @@ app.get("/", (req, res) => {
 });
 
 
-app.use(cors({
-  origin: ["http://localhost:5173" , "http://localhost:5174" , "http://localhost:4173"],
-  credentials: true
-}));
 
 // Health check
 app.get("/api/health", (req, res) => {

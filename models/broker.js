@@ -13,7 +13,7 @@ const broker=new mongoose.Schema({
         ref:"UserAuth"
     },
 
-    propertyTypes:String,
+    propertyTypes:[String],
 
     isVerified:String,
     rating:Number

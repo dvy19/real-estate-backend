@@ -82,7 +82,11 @@ const createPlot=async(req,res)=>{
 
 const getAllPlots=async(req,res)=>{
 
+    console.log("re re re")
+
     try{
+
+        console.log("plot req recieved")
 
         const plots=await Plot.find()
 

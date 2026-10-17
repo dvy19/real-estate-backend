@@ -10,7 +10,7 @@ const upload=require("../middleware/upload")
 
 router.post("/create-plot" , upload.single("image")  , authMiddleware , createPlot)
 router.get("/get-all-plots" , getAllPlots)
-router.post('/get-single-plot/:id' , getSinglePlot)
+router.get('/get-single-plot/:id' , getSinglePlot)
 
 
 

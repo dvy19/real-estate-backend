@@ -9,7 +9,7 @@ const { route } = require("./brokerRoutes")
 
 router.post('/create-house' , authMiddleware, upload.single("image")  , createHouse)
 
-route.get('/get-all-houses'  , getAllHouses)
+router.get('/get-all-houses'  , getAllHouses)
 
 router.get('/get-single-house/:id', getSingleHouse )
 
