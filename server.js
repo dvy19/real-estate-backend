@@ -16,12 +16,17 @@ app.use(cookieParser)
 
 
 const authRoutes=require("./routes/authRoutes")
+const plotRoutes=require("./routes/plotRoutes")
+const brokerRoutes=require('./routes/brokerRoutes')
 
 const server=http.createServer(app)
 
 
 
 app.use('/user' , authRoutes)
+app.use('/plot' , plotRoutes )
+app.use('/broker' , brokerRoutes)
+
 
 app.get("/", (req, res) => {
     res.send("Server is running");
