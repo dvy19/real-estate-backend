@@ -119,4 +119,24 @@ const getSingleBroker=async(req,res)=>{
     }
 }
 
-module.exports={createBroker  , getAllBrokers , getSingleBroker}
+const deleteBroker=async(req,res)=>{
+
+    try{
+
+        const id=req.user.userId;
+
+        const broker=await Broker.findOneAndDelete({user:id})
+        res.status(200).json({
+            message:"broker profile deleted"
+        })
+    }
+    catch(err){
+        console.log(err)
+
+        res.status(500).json({
+            err
+        })
+    }
+}
+
+module.exports={createBroker  , getAllBrokers , getSingleBroker , deleteBroker}
