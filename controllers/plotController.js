@@ -1,5 +1,7 @@
 const Plot=require("../models/plot")
 
+const cloudinary=require('../config/cloudinary')
+
 const createPlot=async(req,res)=>{
 
     try {
@@ -63,7 +65,7 @@ const createPlot=async(req,res)=>{
         legalStatus,
         ownershipType,
         status: status || "available",
-        images: image,
+        image: image,
         seller: user
     });
 
@@ -91,6 +93,9 @@ const getAllPlots=async(req,res)=>{
         console.log("plot req recieved")
 
         const plots=await Plot.find()
+
+
+        //console.log(plots)
 
 
         res.status(201).json({
