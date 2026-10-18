@@ -28,9 +28,10 @@ const createHouse=async(req,res)=>{
              carpetArea,
              plotArea,
              furnishing,
-             amenities
 
         } = req.body;
+
+        const paersedAmeneties=JSON.parse(amenities)
 
         let image = null;
         if (req.file) {
@@ -80,7 +81,7 @@ const createHouse=async(req,res)=>{
             carpetArea,
             plotArea,
             furnishing,
-            amenities,
+            amenities:paersedAmeneties
 
         })
 

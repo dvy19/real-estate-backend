@@ -37,7 +37,7 @@ const plot=new mongoose.Schema({
     facing: String,
     roadWidth: Number,
     amenities: [String],
-    images: [String],
+    images: String,
 
     legalStatus: String,
     ownershipType: String,

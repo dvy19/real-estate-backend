@@ -2,74 +2,76 @@ const Plot=require("../models/plot")
 
 const createPlot=async(req,res)=>{
 
-    try{
+    try {
+    const {
+        title,
+        description,
+        plotType,
+        area,
+        price,
+        pricePerSqFt,
+        location,
+        dimensions,
+        facing,
+        roadWidth,
+        amenities,
+        legalStatus,
+        ownershipType,
+        status
+    } = req.body;
 
-        const {
-            title,
-            description,
-            plotType,
-            area,
-            price,
-            location,
-            dimensions,
-            facing,
-            roadWidth,
-            amenities,
-            images,
-            legalStatus,
-            ownershipType,
-        } = req.body;
+    const user = req.user.userId;
 
-        const user=req.user.userId
+    // Parse nested JSON fields
+    const parsedArea = JSON.parse(area || "{}");
+    const parsedLocation = JSON.parse(location || "{}");
+    const parsedDimensions = JSON.parse(dimensions || "{}");
+    const parsedAmenities = JSON.parse(amenities || "[]");
 
-        let image = null;
-        if (req.file) {
-            image = await new Promise((resolve, reject) => {
-                const stream = cloudinary.uploader.upload_stream(
-                    {
-                        folder: "ngo-app/user-profiles",
-                        resource_type: "image"
-                    },
-                    (error, result) => {
+    // Upload one image to Cloudinary
+    let image = "";
 
-                        if (error) {
-                            reject(error);
-                        } else {
-                            resolve(result.secure_url);
-                        }
+    if (req.file) {
+        image = await new Promise((resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream(
+                {
+                    folder: "real-estate/plots",
+                    resource_type: "image"
+                },
+                (error, result) => {
+                    if (error) return reject(error);
+                    resolve(result.secure_url);
+                }
+            );
 
-                    }
-                );
+            stream.end(req.file.buffer);
+        });
+    }
 
-                stream.end(req.file.buffer);
-            });
-        }
+    const plot = await Plot.create({
+        title,
+        description,
+        plotType,
+        area: parsedArea,
+        price: Number(price),
+        pricePerSqFt: Number(pricePerSqFt),
+        location: parsedLocation,
+        dimensions: parsedDimensions,
+        facing,
+        roadWidth: Number(roadWidth),
+        amenities: parsedAmenities,
+        legalStatus,
+        ownershipType,
+        status: status || "available",
+        images: image,
+        seller: user
+    });
 
-
-        const plot=await Plot.create({
-            title,
-            description,
-            plotType,
-            area,
-            price,
-            location,
-            dimensions,
-            facing,
-            roadWidth,
-            amenities,
-            images,
-            legalStatus,
-            ownershipType,
-            image,
-            user
-
-        })
-
-
-        res.status(200).json({
-            message:"plot created",
-            plot
-        })
+    return res.status(201).json({
+        success: true,
+        message: "Plot created successfully",
+        plot
+    });
     }
     catch(err){
         console.log(err)
