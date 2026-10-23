@@ -3,8 +3,13 @@ const cors=require("cors")
 
 const connectDB=require("./config/db")
 
+const Server=require("socket.io")
 require("dotenv").config()
 const app=express()
+
+const setupChatSocket=require("./socket/chatSocket")
+
+
 
 app.use(express.json())
 
@@ -18,6 +23,8 @@ app.use(cors({
 }));
 
 
+
+
 const http=require("http")
 
 
@@ -29,6 +36,8 @@ const authRoutes=require("./routes/authRoutes")
 const plotRoutes=require("./routes/plotRoutes")
 const brokerRoutes=require('./routes/brokerRoutes')
 
+const chatRoutes=require('./routes/chatRoutes')
+
 const mlRoutes=require('./routes/mlRoutes')
 
 
@@ -38,16 +47,24 @@ const server=http.createServer(app)
 
 
 
+setupChatSocket(server)
+
 app.use((req, res, next) => {
     console.log(req.method, req.url);
     next();
 });
 
 app.use('/user' , authRoutes)
+
 app.use('/plot' , plotRoutes )
+
 app.use('/broker' , brokerRoutes)
+
 app.use('/house',  houseRoutes)
+
 app.use('/ml' , mlRoutes)
+
+app.use('/chat' , chatRoutes)
 
 
 

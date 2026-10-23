@@ -1,5 +1,4 @@
-import axios from "axios";
-
+const axios=require("axios")
 const House=require("../models/house")
 
 const predictHousePrice=async(req,res)=>{
@@ -7,15 +6,15 @@ const predictHousePrice=async(req,res)=>{
 
         const features=req.body;
 
-        const data=await axios.post('"http://127.0.0.1:8000/predict-price"' , features)
+        const data=await axios.post("http://127.0.0.1:8000/predict-price" , features)
 
         const predictedPrice =
-      predictionResponse.data.predicted_price;
+            data.data.predicted_price;
 
         const range = 200000;
 
         const properties = await House.find({
-            city: req.body.features.city,
+            city: req.body.city,
             price: {
                 $gte: predictedPrice - range,
                 $lte: predictedPrice + range,
