@@ -1,6 +1,8 @@
 
 const Broker=require("../models/broker")
 
+
+const cloudinary=require("../config/cloudinary")
 const createBroker=async(req,res)=>{
 
     try{
@@ -17,12 +19,14 @@ const createBroker=async(req,res)=>{
             rating
         }=req.body;
 
+        const parsedProperties=JSON.parse(propertyTypes)
+
         let image = null;
         if (req.file) {
             image = await new Promise((resolve, reject) => {
                 const stream = cloudinary.uploader.upload_stream(
                     {
-                        folder: "ngo-app/user-profiles",
+                        folder: "ngo-app/broker-profiles",
                         resource_type: "image"
                     },
                     (error, result) => {
@@ -47,7 +51,7 @@ const createBroker=async(req,res)=>{
             city,
             phone,
             office,
-            propertyTypes,
+            propertyTypes:parsedProperties,
             isVerified,
             rating,
             user,
@@ -55,7 +59,7 @@ const createBroker=async(req,res)=>{
 
         })
 
-        res.stats(201).json({
+        res.status(201).json({
             message:"broker profile created",
             broker
         })

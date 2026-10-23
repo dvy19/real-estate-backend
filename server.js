@@ -17,10 +17,6 @@ app.use(cors({
     credentials: true
 }));
 
-app.use((req, res, next) => {
-    console.log("Incoming request:", req.method, req.url);
-    next();
-});
 
 const http=require("http")
 
@@ -32,6 +28,9 @@ app.use(cookieParser())
 const authRoutes=require("./routes/authRoutes")
 const plotRoutes=require("./routes/plotRoutes")
 const brokerRoutes=require('./routes/brokerRoutes')
+
+const mlRoutes=require('./routes/mlRoutes')
+
 
 const houseRoutes=require('./routes/houseRoutes')
 
@@ -48,6 +47,7 @@ app.use('/user' , authRoutes)
 app.use('/plot' , plotRoutes )
 app.use('/broker' , brokerRoutes)
 app.use('/house',  houseRoutes)
+app.use('/ml' , mlRoutes)
 
 
 
