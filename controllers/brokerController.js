@@ -1,5 +1,5 @@
 
-const Broker=require("../models/broker")
+const {Broker , BrokerAvailability}=require("../models/broker")
 
 
 const cloudinary=require("../config/cloudinary")
@@ -122,6 +122,45 @@ const getSingleBroker=async(req,res)=>{
         })
     }
 }
+const brokerAvailability = async (req, res) => {
+
+  try {
+    const userId = req.user.userId;
+
+    const broker = await Broker.findOne({ user: userId });
+
+    if (!broker) {
+      return res.status(404).json({
+        message: "Broker not found"
+      });
+    }
+
+    const { schedule } = req.body;
+
+    const availability = await BrokerAvailability.findOneAndUpdate(
+      { broker: broker._id },
+      { $set: { schedule } },
+      {
+        new: true,
+        upsert: true,
+        runValidators: true
+      }
+    );
+
+    res.status(200).json({
+      message: "Availability saved successfully",
+      availability
+    });
+
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      message: error.message
+    });
+  }
+};
+
 
 const deleteBroker=async(req,res)=>{
 
@@ -143,4 +182,4 @@ const deleteBroker=async(req,res)=>{
     }
 }
 
-module.exports={createBroker  , getAllBrokers , getSingleBroker , deleteBroker}
+module.exports={createBroker  , getAllBrokers , getSingleBroker , deleteBroker , brokerAvailability}
