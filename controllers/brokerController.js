@@ -1,5 +1,5 @@
 
-const {Broker , BrokerAvailability}=require("../models/broker")
+const {Broker , BrokerAvailability , BrokerAppointment}=require("../models/broker")
 
 
 const cloudinary=require("../config/cloudinary")
@@ -122,6 +122,7 @@ const getSingleBroker=async(req,res)=>{
         })
     }
 }
+
 const brokerAvailability = async (req, res) => {
 
   try {
@@ -137,11 +138,13 @@ const brokerAvailability = async (req, res) => {
 
     const { schedule } = req.body;
 
+    console.log(req.body)
+
     const availability = await BrokerAvailability.findOneAndUpdate(
       { broker: broker._id },
       { $set: { schedule } },
       {
-        new: true,
+        returnDocument: "after",
         upsert: true,
         runValidators: true
       }
@@ -160,6 +163,68 @@ const brokerAvailability = async (req, res) => {
     });
   }
 };
+
+const getBrokerAvailability = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        console.log(id)
+
+
+        const availability = await BrokerAvailability.findOne({
+            broker: id
+        });
+
+        console.log(availability)
+
+        if (!availability) {
+            return res.status(404).json({
+                message: "Broker availability not found"
+            });
+        }
+
+        res.status(200).json({
+            message: "Availability fetched successfully",
+            availability
+        });
+
+    } 
+    catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: error.message
+        });
+    }
+};
+
+
+const createAppointment=async(req,res)=>{
+
+
+    try{
+
+        const user=req.user.userId
+
+
+        const {appointmentDate , broker , startTime, endTime , status}=req.body
+
+        const appointment=await BrokerAppointment.create({
+            user, broker , appointmentDate , startTime, endTime , status
+        })
+
+        res.status(200).json({
+            message:"appointment created",
+            appointment
+        })
+    }
+     catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: error.message
+        });
+    }
+
+}
 
 
 const deleteBroker=async(req,res)=>{
@@ -182,4 +247,4 @@ const deleteBroker=async(req,res)=>{
     }
 }
 
-module.exports={createBroker  , getAllBrokers , getSingleBroker , deleteBroker , brokerAvailability}
+module.exports={createBroker  , getAllBrokers , getSingleBroker , deleteBroker , brokerAvailability , getBrokerAvailability , createAppointment}

@@ -24,7 +24,7 @@ const messageSchema = new mongoose.Schema(
     readBy: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "UserAuth",
       },
     ],
   },
@@ -33,4 +33,6 @@ const messageSchema = new mongoose.Schema(
 
 messageSchema.index({ chat: 1, createdAt: -1 });
 
-export default mongoose.model("Message", messageSchema);
+const Message=mongoose.model("Message", messageSchema);
+
+module.exports=Message

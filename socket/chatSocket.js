@@ -1,19 +1,18 @@
-const setupChatSocket = (server) => {
-    
-    const { Server } = require("socket.io");
 
-    io = new Server(server, {
-        cors: {
-             origin: [
-                    "http://localhost:5173",
-                    "http://localhost:5174",
-                    "http://localhost:4173"
-                ],
-            methods: ["GET", "POST"],
-            credentials: true,
-            autoConnect:true
-        }
-    });
+const { Server } = require("socket.io");
+
+const setupChatSocket = (server) => {
+  const io = new Server(server, {
+    cors: {
+      origin: [
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:4173",
+      ],
+      methods: ["GET", "POST"],
+      credentials: true,
+    },
+  });
 
   io.on("connection", (socket) => {
     console.log("Connected:", socket.id);
@@ -31,6 +30,8 @@ const setupChatSocket = (server) => {
       console.log("Disconnected:", socket.id);
     });
   });
+
+  return io;
 };
 
-module.exports=setupChatSocket
+module.exports = setupChatSocket;

@@ -5,12 +5,16 @@ const Chat=require('../models/chat')
 
 const UserAuth=require('../models/auth')
 
-const Broker=require('../models/broker')
+const {Broker}=require('../models/broker')
+
+const Message=require('../models/message')
+
 
 // Create a new chat or return an existing one
 const createOrGetChat = async (req, res, next) => {
 
   console.log("create chat")
+  
   try {
     const userId = req.user.userId;
     const { brokerId } = req.body;
@@ -119,4 +123,44 @@ const getMyChats = async (req, res, next) => {
   }
 };
 
-module.exports={createOrGetChat , getMyChats}
+const sendMessage=async(req,res)=>{
+
+  try{
+
+    const user=req.user.userId
+    const { chatId, text}=req.body
+
+    const io = req.app.get("io");
+
+
+    const chat = await Chat.findOne({
+      _id: chatId,
+      participants: user,
+    });
+
+    const message = await Message.create({
+      chat: chatId,
+      sender: user,
+      text: text.trim(),
+      readBy: [user],
+    });
+
+    chat.lastMessage = message._id;
+    await chat.save();
+
+    const populatedMessage = await Message.findById(message._id)
+      .populate("sender", "name role image");
+
+    io.to(chatId).emit("new_message", populatedMessage);
+
+    return res.status(201).json({
+      message: "Message sent successfully",
+      data: populatedMessage,
+    });
+  } 
+  catch (error) {
+    next(error);
+  }
+}
+
+module.exports={createOrGetChat , getMyChats , sendMessage}

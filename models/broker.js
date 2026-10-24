@@ -19,19 +19,20 @@ const broker=new mongoose.Schema({
     rating:Number
 })
 
-const mongoose = require("mongoose");
 
 const brokerAvailabilitySchema = new mongoose.Schema({
 
   broker: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "UserAuth",
+    ref: "Broker",
     required: true,
     unique: true
   },
 
   schedule: [
     {
+        date:String,
+
       day: {
         type: String,
         enum: [
@@ -64,6 +65,50 @@ const BrokerAvailability = mongoose.model(
   brokerAvailabilitySchema
 );
 
+
+const appointment=new mongoose.Schema({
+
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "UserAuth",
+      required: true,
+    },
+
+    broker: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "UserAuth",
+      required: true,
+    },
+
+    appointmentDate: {
+      type: Date,
+      required: true,
+    },
+
+    startTime: {
+      type: String,
+      required: true,
+    },
+
+    endTime: {
+      type: String,
+      required: true,
+    },
+
+    status: {
+      type: String,
+      enum: ["pending", "accepted", "rejected", "cancelled"],
+      default: "pending",
+    },
+
+  },
+
+  { timestamps: true }
+);
+
+
 const Broker=mongoose.model("Broker" , broker)
 
-module.exports={Broker , BrokerAvailability}
+const BrokerAppointment=mongoose.model("BrokerAppointment" , appointment)
+
+module.exports={Broker , BrokerAvailability ,  BrokerAppointment}
