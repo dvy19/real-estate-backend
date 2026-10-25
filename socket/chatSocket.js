@@ -1,4 +1,3 @@
-
 const { Server } = require("socket.io");
 
 const setupChatSocket = (server) => {
@@ -17,13 +16,19 @@ const setupChatSocket = (server) => {
   io.on("connection", (socket) => {
     console.log("Connected:", socket.id);
 
+    // Existing chat functionality
     socket.on("join_chat", (chatId) => {
       socket.join(chatId);
-      console.log(`Socket ${socket.id} joined ${chatId}`);
     });
 
     socket.on("leave_chat", (chatId) => {
       socket.leave(chatId);
+    });
+
+    // Appointment notifications
+    socket.on("join_broker", (brokerId) => {
+      socket.join(`broker_${brokerId}`);
+      console.log(`Broker room joined: ${brokerId}`);
     });
 
     socket.on("disconnect", () => {

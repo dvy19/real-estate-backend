@@ -47,7 +47,9 @@ const server=http.createServer(app)
 
 
 
-setupChatSocket(server)
+const io = setupChatSocket(server);
+
+app.set("io", io);
 
 app.use((req, res, next) => {
     console.log(req.method, req.url);
