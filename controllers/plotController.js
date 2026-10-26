@@ -2,6 +2,8 @@ const Plot=require("../models/plot")
 
 const cloudinary=require('../config/cloudinary')
 
+const {Broker}=require('../models/broker')
+
 const createPlot=async(req,res)=>{
 
     try {
@@ -134,4 +136,50 @@ const getSinglePlot=async(req,res)=>{
     }
 }
 
-module.exports={createPlot , getAllPlots , getSinglePlot}
+const getPlotBroker = async (req, res) => {
+    try {
+        const { plotId } = req.params;
+
+        console.log(plotId)
+
+        const plot = await Plot.findById(plotId);
+
+        if(plot){
+            console.log('plot ')
+        }
+
+        console.log(plot?.seller)
+
+        if (!plot) {
+            return res.status(404).json({
+                message: "Plot not found"
+            });
+        }
+        if(plot){
+            console.log('plot found ')
+        }
+
+        const broker = await Broker.findOne({
+            user: plot.seller
+        });
+
+        if (!broker) {
+            console.log("no broker")
+            return res.status(404).json({
+                message: "Broker profile not found"
+            });
+        }
+
+        res.status(200).json({
+            message: "Broker details fetched successfully",
+            broker
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        });
+    }
+};
+
+module.exports={createPlot , getAllPlots , getSinglePlot , getPlotBroker}
