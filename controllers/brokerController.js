@@ -77,28 +77,37 @@ const createBroker=async(req,res)=>{
     }
 }
 
+const getAllBrokers = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 3;
 
-const getAllBrokers=async(req,res)=>{
+        const skip = (page - 1) * limit;
 
-    try{
+        const brokers = await Broker.find()
+            .skip(skip)
+            .limit(limit);
 
-        const brokers=await Broker.find()
+        const totalBrokers = await Broker.countDocuments();
 
         res.status(200).json({
-            message:"all brokers",
-            brokers
-        })
+            message: "Brokers fetched successfully",
+            brokers,
+            pagination: {
+                totalBrokers,
+                currentPage: page,
+                totalPages: Math.ceil(totalBrokers / limit),
+                limit
+            }
+        });
 
-
-    }
-    catch(err){
-        console.log(err)
-
+    } catch (error) {
         res.status(500).json({
-            err
-        })
+            message: "Error fetching brokers",
+            error: error.message
+        });
     }
-}
+};
 
 const getMyProfile=async(req,res)=>{
 
