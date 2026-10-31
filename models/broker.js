@@ -76,7 +76,7 @@ const appointment=new mongoose.Schema({
 
     broker: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "UserAuth",
+      ref: "Broker",
       required: true,
     },
 

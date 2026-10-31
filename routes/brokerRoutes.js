@@ -10,6 +10,7 @@ const {createBroker ,
     getBrokerAvailability , 
     createAppointment,
     getMyProfile,
+    getBrokerProperties,
     getBrokerAppointment
 } = require("../controllers/brokerController")
 
@@ -31,5 +32,7 @@ router.post('/create-appointment' ,  authMiddleware , createAppointment)
 router.get('/get-my-broker-profile' , authMiddleware , getMyProfile )
 
 router.get('/get-self-broker-appointment' , authMiddleware , getBrokerAppointment)
+
+router.get('/get-broker-properties/:id' , getBrokerProperties )
 
 module.exports=router

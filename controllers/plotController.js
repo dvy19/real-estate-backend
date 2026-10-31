@@ -136,6 +136,8 @@ const getSinglePlot=async(req,res)=>{
     }
 }
 
+
+// get broker from the plot's id
 const getPlotBroker = async (req, res) => {
     try {
         const { plotId } = req.params;

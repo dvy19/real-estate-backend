@@ -6,6 +6,9 @@ const bcrypt=require("bcrypt")
 
 const jwt=require("jsonwebtoken")
 
+const Broker=require('../models/broker')
+const {BrokerAppointment}=require('../models/broker')
+
 
 const register=async(req,res)=>{
 
@@ -133,4 +136,28 @@ const login=async(req,res)=>{
     }
 };
 
-module.exports={register,login}
+
+const getMyAppointment=async(req,res)=>{
+
+    try{
+
+        const id=req.user.userId;
+
+        const myAppointment=await BrokerAppointment.find({user:id}).populate("broker" , "name email phone")
+        .sort({ createdAt: -1 });
+
+        return res.status(200).json({
+            message:"my appointment",
+            count: myAppointment.length,
+            myAppointment
+        })
+        
+    }
+    catch(err){
+        console.log(err)
+    }
+
+
+}
+
+module.exports={register,login  , getMyAppointment }

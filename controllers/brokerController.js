@@ -1,6 +1,8 @@
 
 const {Broker , BrokerAvailability , BrokerAppointment}=require("../models/broker")
 
+const House=require('../models/house')
+const Plot=require('../models/plot')
 
 const cloudinary=require("../config/cloudinary")
 const createBroker=async(req,res)=>{
@@ -314,6 +316,65 @@ const deleteBroker=async(req,res)=>{
     }
 }
 
+const getBrokerProperties = async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log(id)
+
+        // 1. Find broker profile and get its auth ID
+        const broker = await Broker.findById(id);
+
+        if (!broker) {
+            return res.status(404).json({
+                message: "Broker not found"
+            });
+        }
+
+        const authId = broker.user;
+
+        /*
+        it is a JavaScript technique used to run multiple asynchronous database operations concurrently.
+        Promise.all() waits for both operations to finish. They can execute while the other query is still running, rather than waiting for the first query to finish before starting the second.
+
+        [houses, plots]?
+            This is called array destructuring in JavaScript.
+
+            Promise.all() returns an array of results in the same order as the input promises.
+
+        const results=await Promise.all([
+        House.find(),
+        Plot.find()])
+
+        const House=results[0]
+
+        If you want each query to succeed or fail independently, you can use Promise.allSettled() instea
+        */
+
+        // 2. Fetch houses and plots in parallel
+        const [houses, plots] = await Promise.all([
+            House.find({ broker: authId }),
+            Plot.find({ seller: authId })
+        ]);
+
+        // 3. Return both in a single response
+        res.status(200).json({
+            message: "Broker properties fetched successfully",
+            broker,
+            houses,
+            plots,
+            totalProperties: houses.length + plots.length
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: "Error fetching broker properties",
+            error: error.message
+        });
+    }
+};
+
+
+
 
 
 
@@ -325,5 +386,6 @@ module.exports={createBroker  ,
     getBrokerAvailability ,
     createAppointment ,
     getMyProfile,
-    getBrokerAppointment
+    getBrokerAppointment,
+    getBrokerProperties
 }
